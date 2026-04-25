@@ -59,6 +59,12 @@ def quick_start():
         )
         print("✓")
         
+        # 7. 启动自动内存服务（后台）
+        print("⚙️ 启动自动内存服务...", end=" ")
+        from auto_memory_service import get_auto_memory_service
+        auto_memory = get_auto_memory_service(agent_name='default')
+        print("✓")
+        
         print()
         print("=" * 70)
         print("✨ 所有系统已启动！")
@@ -117,6 +123,7 @@ def quick_start():
             'debug_memories': debug_memories,
             'planning_memories': planning_memories,
             'summarizer': summarizer,
+            'auto_memory': auto_memory,
             'project_root': project_root,
         }
         

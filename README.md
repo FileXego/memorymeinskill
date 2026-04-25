@@ -1,146 +1,152 @@
-# Memory Agent Evolution Skill - Production Ready
+# 🧠 Memory Agent Evolution
 
-**Version:** 1.0.0  
-**Status:** ✅ Production Ready  
-**Last Updated:** 2026-04-25
+**自动长期记忆系统 | Auto Long-term Memory**
 
----
-
-## 📚 What This Skill Provides
-
-A **complete, lightweight memory architecture** for AI agents that learn and evolve.
-
-### Core Features
-
-- **Four Memory Layers** (L0-L3): Events, Semantics, Procedures, Metacognition
-- **Dual-Mode Retrieval**: Lite-Mode for routine (fast) + Full-Mode for escalation (deep)
-- **Temporal Knowledge Graph**: Links across time and memory layers
-- **Automatic Skill Tracking**: Detects over-specialization automatically
-- **Markdown-Native**: No databases required, version-controllable storage
-- **Complete Specification**: Architecture blueprint + integration code + templates
+> 在 Claude Code、GitHub Copilot 或 Codex 中**自动**累积和学习项目知识。
 
 ---
 
-## 📁 Project Structure
+## ⚡ 它是如何工作的
+
+```
+你在 Claude Code 中写代码
+     ↓
+系统自动激活 ✨
+     ↓
+你的对话 → 自动保存到 memory_local/
+对话太长 → 自动总结并巩固
+     ↓
+下次打开 → 恢复上下文并学习历史
+```
+
+---
+
+## 🚀 一分钟快速开始
+
+```bash
+# 1️⃣  启动系统（首次）
+python quick_start.py
+
+# 2️⃣  打开 Claude Code - 系统自动激活 ⚡
+
+# 3️⃣  开始工作 - 一切自动进行
+```
+
+完全自动！无需任何配置。
+
+---
+
+## 📂 项目结构
 
 ```
 memorymeinskill/
-├── .github/skills/memory-agent-evolution/
-│   ├── SKILL.md                          ← Start here (900 lines, complete spec)
-│   ├── memory/                           ← Runtime storage
-│   │   ├── store.md                      ← Full memory (L0-L3)
-│   │   └── reflect.md                    ← Reflection & telemetry
-│   ├── scripts/
-│   │   ├── init_memory_system.py         ← Setup new memory (Python)
-│   │   └── load_memory.py                ← Read/parse memory (Python API)
-│   ├── references/
-│   │   ├── integration-guide.md          ← How to integrate (with examples)
-│   │   ├── four-layer-memory-detail.md   ← Layer semantics (deep dive)
-│   │   └── examples.md                   ← Real integration examples
-│   └── assets/
-│       ├── store-template.md             ← Template for store.md
-│       └── reflect-template.md           ← Template for reflect.md
-│
-├── MEMORY_INTEGRATION_GUIDE.md           ← Global setup & configuration
-├── README.md                             ← This file
-└── SKILL_CHECKLIST.md                    ← Launch checklist
+├── .instructions.md              ← Claude Code 自动配置 ⚡
+├── memory_local/                 ← 私密记忆存储 🔒
+│   ├── qa_agent/
+│   ├── code_agent/
+│   ├── debug_agent/
+│   └── planning_agent/
+├── .github/skills/               ← 核心 Skill 定义
+## 🎯 核心功能
+
+| 功能 | 说明 |
+|------|------|
+| **自动激活** | 打开 Claude Code 即自动启动 ⚡ |
+| **自动保存** | 对话自动归档到 `memory_local/` 📁 |
+| **自动总结** | 信息过量时自动压缩 🔄 |
+| **跨项目学习** | 从历史中吸取经验 🧠 |
+| **完全私密** | 所有数据本地存储，永不上传 🔒 |
+
+---
+
+## 💻 在代码中使用
+
+```python
+# 自动加载你的项目记忆
+from scripts.load_memory import MemoryLoader
+loader = MemoryLoader('memory_local/code_agent')
+memories = loader.load_store(mode='full')
+
+# 查看你学到的东西
+print(f"✓ {len(memories.get('L2', []))} 个代码模式")
+print(f"✓ {len(memories.get('L3', []))} 个长期洞察")
 ```
 
 ---
 
-## 🚀 Quick Start (5 minutes)
+## 📚 文档
 
-### 1. Initialize Memory System
+| 文档 | 用途 | 适合 |
+|------|------|------|
+| [快速开始](#-一分钟快速开始) | 5 分钟上手 | 所有人 |
+| `docs/README_CN.md` | 中文完整说明 | 中文用户 |
+| `docs/AGENT_INTEGRATION_GUIDE.md` | 深度集成指南 | 开发者 |
+| `docs/LOCAL_RUN_GUIDE.md` | 本地部署细节 | 系统管理员 |
+| `.github/skills/memory-agent-evolution/SKILL.md` | 架构规范 | 研究者 |
+
+---
+
+## ❓ 常见问题
+
+**Q: 记忆会泄露隐私吗？**  
+A: 不会。所有记忆存储在 `memory_local/`，完全离线私密。
+
+**Q: 如何重置记忆？**  
+A: 运行 `rm -rf memory_local && python quick_start.py`
+
+**Q: 支持哪些 IDE？**  
+A: Claude Code ⚡ | GitHub Copilot | VS Code | Jupyter | 任何 Python IDE
+
+**Q: 记忆会变得很大吗？**  
+A: 系统自动总结和压缩。平均项目只占 5-50MB。
+
+**Q: 能共享记忆吗？**  
+A: 不建议。复制 `memory_local/` 文件夹到新项目即可迁移。
+
+---
+
+## 🔥 立即开始
 
 ```bash
-cd /path/to/your/project
-python .github/skills/memory-agent-evolution/scripts/init_memory_system.py --path ./memory
+# Windows
+.\start.bat
 
-# ✓ Creates memory/store.md and memory/reflect.md
+# macOS/Linux  
+./start.sh
+
+# 或任何平台
+python quick_start.py
 ```
 
-### 2. Load Memory in Your Code
-
-```python
-import sys
-sys.path.insert(0, '.github/skills/memory-agent-evolution/scripts')
-from load_memory import MemoryLoader
-
-loader = MemoryLoader("memory")
-
-# Get memory (Lite-Mode: fast, routine tasks)
-store = loader.load_store(mode="lite")
-reflect = loader.load_reflect(mode="lite")
-
-# Your logic here...
-
-# Save results
-loader.log_run(run_id="task-001", outcome="success")
-```
-
-### 3. Run the 7-Step Loop
-
-```python
-def agent_turn(task):
-    # 1. Observe
-    # 2. Retrieve (with gate)
-    if high_priority(task):
-        mode = "full"
-    else:
-        mode = "lite"
-    
-    store = loader.load_store(mode=mode)
-    reflect = loader.load_reflect(mode=mode)
-    
-    # 3. Act/Reason
-    result = generate(task, store, reflect)
-    
-    # 4-7. Evaluate, Reflect, Consolidate, Evolve
-    outcome = evaluate(result)
-    loader.log_run(task.id, outcome)
-    
-    return result
-```
-
-See `MEMORY_INTEGRATION_GUIDE.md` for detailed examples.
+**就这样！** 系统会自动：
+1. 检查依赖
+2. 初始化环境  
+3. 启动所有 Agent
+4. 准备好使用
 
 ---
 
-## 📖 Documentation
+## 📊 项目信息
 
-| Document | Purpose | Read Time |
-|----------|---------|-----------|
-| **SKILL.md** | Complete architectural specification | 20-30 min |
-| **MEMORY_INTEGRATION_GUIDE.md** | Global integration & configuration | 10-15 min |
-| **references/integration-guide.md** | Step-by-step integration with patterns | 15-20 min |
-| **references/four-layer-memory-detail.md** | Deep dive into each memory layer | 20-25 min |
-| **assets/store-template.md** | Template & best practices for store.md | 5-10 min |
-
-**Recommended reading order:**
-1. This README (5 min)
-2. SKILL.md sections on Purpose & When to Use (5 min)
-3. MEMORY_INTEGRATION_GUIDE.md Quick Start (5 min)
-4. Try the integration pattern that matches your use case (15 min)
-5. Deep dive as needed (optional)
+- **版本**: 1.0 - 自动激活版
+- **状态**: ✅ 生产就绪
+- **更新**: 2026-04-25
+- **许可**: MIT
 
 ---
 
-## 🎯 Key Concepts
+## 🌟 下一步
 
-### Dual-Mode Retrieval
+1. **现在**: 运行 `python quick_start.py`
+2. **打开**: Claude Code（自动激活）
+3. **开始**: 写代码（一切自动）
+4. **查看**: 你积累的记忆
 
-|  | **Lite-Mode** | **Full-Mode** |
-|---|---|---|
-| **Use Case** | Routine tasks, quick responses | Debugging, complex reasoning, high priority |
-| **Reads** | L1 + L2 + Lite Snapshot | L0 + L1 + L2 + L3 (complete) |
-| **Cost** | ~50-100ms | ~300-500ms |
-| **When** | Default | task_priority=HIGH OR repeated_errors≥2 OR debug_mode |
+**享受自动化的智能助手！** 🚀
 
-### Memory Layers
+---
 
-- **L0 Events**: Raw data (dialogue turns, tool calls)
-- **L1 Semantics**: Facts, preferences, constraints
-- **L2 Procedures**: Reusable workflows, decision templates
+需要帮助？查看 `docs/` 文件夹了解完整文档。
 - **L3 Metacognitive**: Self-evaluation, learning goals, calibration
 
 ### Gate Conditions (Escalate to Full-Mode when):
