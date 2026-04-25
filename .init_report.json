@@ -1,0 +1,15 @@
+{
+  "timestamp": "2026-04-25T20:08:16.582383",
+  "project_root": "D:\\memorymeinskill",
+  "python_version": "3.13.9",
+  "memory_dirs": {
+    "qa_agent": "D:\\memorymeinskill\\memory_local\\qa_agent",
+    "code_agent": "D:\\memorymeinskill\\memory_local\\code_agent",
+    "debug_agent": "D:\\memorymeinskill\\memory_local\\debug_agent",
+    "planning_agent": "D:\\memorymeinskill\\memory_local\\planning_agent"
+  },
+  "config": {
+    "local": "config.local.yaml",
+    "global": "GLOBAL_AGENT_CONFIG.yaml"
+  }
+}

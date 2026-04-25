@@ -1,0 +1,210 @@
+---
+# Claude Code Integration Configuration
+# 用于在 Claude Code 中集成记忆系统
+
+name: "Memory Agent System"
+version: "1.0"
+description: "四层记忆系统集成 - 为你的项目带来长期记忆、自动总结、全局管理"
+
+# 快速启动
+quick_start:
+  title: "🚀 快速启动 Memory Agent"
+  commands:
+    - id: "init_local"
+      name: "初始化本地开发环境"
+      description: "设置本地内存存储目录和配置"
+      command: "python init_dev.py"
+      platform: ["windows", "macos", "linux"]
+    
+    - id: "load_memory"
+      name: "加载记忆"
+      description: "从本地存储加载某个 Agent 的全部记忆"
+      template: |
+        from scripts.load_memory import MemoryLoader
+        loader = MemoryLoader('memory_local/{agent_name}')
+        memories = loader.load_all()
+        print(f"✓ 已加载 {agent_name} 的记忆")
+      agents: ["qa_agent", "code_agent", "debug_agent", "planning_agent"]
+    
+    - id: "auto_summarize"
+      name: "自动总结"
+      description: "监控对话内容，自动触发总结和记忆保存"
+      template: |
+        from scripts.auto_summary import AutoSummarizer
+        summarizer = AutoSummarizer('memory_local', 'config.local.yaml')
+        result = summarizer.monitor_context(current_text=conversation)
+        if result["should_summarize"]:
+            summarizer.run_consolidation_cycle(conversation)
+
+# 代理定义 - 在 Claude Code 中创建 Agent
+agents:
+  - id: "memory_qa_agent"
+    name: "💭 记忆 QA 助手"
+    description: "带有长期记忆的问答 Agent - 记住之前的回答和相关概念"
+    system_prompt: |
+      你是一个智能 QA 助手，具有长期记忆能力。
+      
+      你的职责：
+      1. 回答用户的问题
+      2. 根据之前的记忆改进回答质量
+      3. 自动保存重要信息到记忆系统
+      4. 在信息量过大时自动总结并巩固记忆
+      
+      记忆系统集成：
+      - 启动时加载 L0-L3 记忆
+      - 每次交互后检查是否需要更新记忆
+      - 信息量超过阈值时自动总结
+    initialization: |
+      # 初始化代码
+      import sys
+      sys.path.insert(0, 'D:/memorymeinskill')
+      from scripts.load_memory import MemoryLoader
+      from scripts.auto_summary import AutoSummarizer
+      
+      # 加载记忆
+      loader = MemoryLoader('memory_local/qa_agent')
+      memories = loader.load_all()
+      summarizer = AutoSummarizer('memory_local', 'config.local.yaml')
+
+  - id: "memory_code_agent"
+    name: "💻 记忆代码助手"
+    description: "带有长期记忆的代码编程 Agent - 学习你的代码风格和常见模式"
+    system_prompt: |
+      你是一个智能代码编程助手，具有长期记忆能力。
+      
+      你的职责：
+      1. 编写和调试代码
+      2. 记住用户的代码风格偏好
+      3. 保存成功的代码模式到 L2 工作流层
+      4. 学习项目特定的最佳实践
+      
+      记忆系统集成：
+      - 启动时加载代码模式和最佳实践
+      - 每次生成代码后提交到记忆
+      - 相似代码出现时自动重用已保存的模式
+
+  - id: "memory_debug_agent"
+    name: "🐛 记忆调试助手"
+    description: "带有长期记忆的调试 Agent - 记住常见错误和解决方案"
+    system_prompt: |
+      你是一个智能调试助手，具有长期记忆能力。
+      
+      你的职责：
+      1. 诊断和修复代码错误
+      2. 记住你之前遇到的错误类型和解决方案
+      3. 在遇到相同错误时快速给出解决方案
+      4. 建立错误库用于未来参考
+      
+      记忆系统集成：
+      - 启动时加载已知错误类型库
+      - 遇到新错误时存储到 L3 元认知层
+      - 错误频率过高时自动总结根本原因
+
+  - id: "memory_planning_agent"
+    name: "📋 记忆规划助手"
+    description: "带有长期记忆的项目规划 Agent - 学习你的规划风格和项目结构"
+    system_prompt: |
+      你是一个智能项目规划助手，具有长期记忆能力。
+      
+      你的职责：
+      1. 帮助规划项目和任务
+      2. 记住项目的结构和约束条件
+      3. 学习成功的计划模式
+      4. 改进计划的可执行性
+      
+      记忆系统集成：
+      - 加载之前成功的计划模板
+      - 保存新的计划模式
+      - 学习项目特定的时间估计
+
+# 集成点
+integrations:
+  - type: "command_palette"
+    description: "在 Claude Code 命令面板中显示的命令"
+    commands:
+      - "Memory: 初始化本地环境"
+      - "Memory: 加载所有 Agent 记忆"
+      - "Memory: 自动总结当前对话"
+      - "Memory: 检查记忆健康状态"
+      - "Memory: 导出记忆为 JSON"
+  
+  - type: "hover_info"
+    description: "在代码中显示记忆相关的提示"
+    triggers:
+      - "import from scripts.load_memory"
+      - "import from scripts.auto_summary"
+  
+  - type: "status_bar"
+    description: "VS Code 状态栏中的记忆系统监控"
+    display:
+      - "记忆大小"
+      - "最后更新时间"
+      - "激活 Agent 数量"
+      - "L3 洞察条数"
+
+# 快速参考
+reference:
+  directories:
+    root: "d:\\memorymeinskill"
+    memory: "memory_local/"
+    skills: ".github/skills/memory-agent-evolution/"
+    scripts: ".github/skills/memory-agent-evolution/scripts/"
+    config: "."
+  
+  key_files:
+    local_config: "config.local.yaml"
+    global_config: "GLOBAL_AGENT_CONFIG.yaml"
+    documentation_cn: "README_CN.md"
+    integration_guide: "AGENT_INTEGRATION_GUIDE.md"
+    init_script: "init_dev.py"
+  
+  memory_structure:
+    qa_agent: "memory_local/qa_agent/"
+    code_agent: "memory_local/code_agent/"
+    debug_agent: "memory_local/debug_agent/"
+    planning_agent: "memory_local/planning_agent/"
+
+# 使用场景
+scenarios:
+  - scenario: "第一次使用"
+    steps:
+      - "运行 python init_dev.py 初始化环境"
+      - "打开 README_CN.md 了解系统"
+      - "创建第一个 Agent 实例"
+  
+  - scenario: "添加新 Agent"
+    steps:
+      - "在 config.local.yaml 中添加 Agent 配置"
+      - "创建对应的 memory_local/{agent_name}/ 目录"
+      - "在代码中导入并使用 MemoryLoader"
+  
+  - scenario: "自动总结长对话"
+    steps:
+      - "创建 AutoSummarizer 实例"
+      - "调用 monitor_context() 检查内容量"
+      - "如果超过阈值，自动调用 run_consolidation_cycle()"
+  
+  - scenario: "监控所有 Agent"
+    steps:
+      - "导入 GlobalMonitor"
+      - "调用 monitor_all()"
+      - "检查健康状态报告"
+
+# 故障排查
+troubleshooting:
+  - issue: "找不到 load_memory 模块"
+    solution: |
+      确保 sys.path 包含项目根目录：
+      import sys
+      sys.path.insert(0, 'd:/memorymeinskill')
+  
+  - issue: "记忆文件不存在"
+    solution: "运行 python init_dev.py 自动创建所有需要的目录和文件"
+  
+  - issue: "config.local.yaml 被 Git 跟踪"
+    solution: "检查 .gitignore 确保包含 config.local.yaml 和 memory_local/"
+  
+  - issue: "自动总结不工作"
+    solution: |
+      检查 config.local.yaml 中的 auto_summary.enabled: true
+      确保 token_threshold 不要设置过高
