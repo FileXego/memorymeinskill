@@ -55,7 +55,7 @@ def quick_start():
         print("🔄 初始化自动总结器...", end=" ")
         summarizer = AutoSummarizer(
             str(project_root / 'memory_local'),
-            config_path=str(project_root / 'config.local.yaml')
+            config_path=str(project_root / 'config' / 'local.yaml')
         )
         print("✓")
         

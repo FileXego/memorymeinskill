@@ -4,6 +4,11 @@ local_memory/
 .memory/
 **/memory_local/
 
+# Local configuration
+config.local.yaml
+config/local.yaml
+.init_report.json
+
 # Python environment
 __pycache__/
 *.py[cod]

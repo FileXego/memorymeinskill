@@ -1,0 +1,177 @@
+# Memory Agent Evolution - 默认配置
+# Default Configuration for Memory System
+# 版本: 1.0.0
+# 更新: 2026-04-25
+
+# ========================================
+# 全局 Agent 配置
+# ========================================
+agents:
+  qa_agent:
+    enabled: true
+    memory_dir: ./memory_local/qa_agent
+    mode: lite
+    description: 处理用户问题并学习答案
+
+    gate_conditions:
+      high_priority:
+        triggers_full_mode: true
+        priority_keywords: ["urgent", "critical", "priority"]
+      error_escalation:
+        triggers_full_mode: true
+        threshold: 2
+      complexity_detection:
+        triggers_full_mode: true
+        min_tokens: 200
+
+    retrieval:
+      lite_scope: ["L1", "L2", "snapshot"]
+      full_scope: ["L0", "L1", "L2", "L3"]
+      ranking_weights:
+        relevance: 0.3
+        confidence: 0.2
+        recency: 0.2
+        success_rate: 0.15
+        diversity: 0.15
+
+    auto_summary:
+      enabled: true
+      token_threshold: 5000
+      check_interval: 10
+      methods:
+        - extractive
+        - abstractive
+
+    skill_tracking:
+      enabled: true
+      window: 50
+      over_specialization_threshold: 0.65
+      hhi_threshold: 0.45
+
+  code_agent:
+    enabled: true
+    memory_dir: ./memory_local/code_agent
+    mode: lite
+    description: 代码生成与优化
+
+    gate_conditions:
+      complexity_detection:
+        triggers_full_mode: true
+        min_lines: 100
+      framework_specific:
+        triggers_full_mode: true
+        frameworks: ["machine_learning", "distributed_systems", "security"]
+      refactor_mode:
+        triggers_full_mode: true
+        keywords: ["refactor", "optimize", "security", "performance"]
+
+    auto_summary:
+      enabled: true
+      token_threshold: 8000
+      check_interval: 5
+      methods:
+        - extractive
+        - code_summary
+
+    skill_tracking:
+      enabled: true
+      window: 50
+
+  debug_agent:
+    enabled: true
+    memory_dir: ./memory_local/debug_agent
+    mode: lite
+    description: 问题诊断与修复
+
+    gate_conditions:
+      error_type:
+        triggers_full_mode: true
+        severe_errors: ["segmentation_fault", "out_of_memory", "deadlock"]
+      historical_patterns:
+        triggers_full_mode: true
+        similar_errors_threshold: 2
+
+    auto_summary:
+      enabled: true
+      token_threshold: 3000
+      check_interval: 3
+
+    skill_tracking:
+      enabled: true
+      window: 30
+
+  planning_agent:
+    enabled: true
+    memory_dir: ./memory_local/planning_agent
+    mode: full
+    description: 任务规划与项目管理
+
+    gate_conditions:
+      project_complexity:
+        triggers_full_mode: true
+        min_tasks: 10
+      multi_agent_coordination:
+        triggers_full_mode: true
+
+    auto_summary:
+      enabled: true
+      token_threshold: 10000
+      check_interval: 20
+
+    skill_tracking:
+      enabled: true
+      window: 100
+
+# ========================================
+# Claude Code 集成配置
+# ========================================
+integration:
+  name: "Memory Agent System"
+  version: "1.0"
+  description: "四层记忆系统 - 长期记忆、自动总结、全局管理"
+
+  quick_start:
+    init_command: "python quick_start.py"
+    platforms: ["windows", "macos", "linux"]
+
+  system_prompts:
+    qa_agent: |
+      你是智能 QA 助手，具有长期记忆能力。
+      职责: 回答问题、保存记忆、自动总结。
+
+    code_agent: |
+      你是智能代码助手，具有长期记忆能力。
+      职责: 编写代码、记住风格、学习最佳实践。
+
+    debug_agent: |
+      你是智能调试助手，具有长期记忆能力。
+      职责: 诊断错误、记住解决方案、建立错误库。
+
+    planning_agent: |
+      你是智能规划助手，具有长期记忆能力。
+      职责: 任务规划、协调多 Agent、学习项目模式。
+
+# ========================================
+# 记忆系统配置
+# ========================================
+memory:
+  storage:
+    format: markdown
+    encoding: utf-8
+    backup_enabled: true
+    backup_interval: 86400  # 24 hours
+
+  consolidation:
+    enabled: true
+    min_events: 10
+    max_age_days: 30
+
+  retrieval:
+    cache_enabled: true
+    cache_ttl: 300  # 5 minutes
+    max_results: 50
+
+  evolution:
+    learning_rate: 0.01
+    confidence_threshold: 0.7
+    supersede_threshold: 0.85

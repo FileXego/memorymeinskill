@@ -6,7 +6,7 @@
 
 ---
 
-## ⚡ 它是如何工作的
+## ⚡ 工作原理
 
 ```
 你在 Claude Code 中写代码
@@ -21,18 +21,18 @@
 
 ---
 
-## 🚀 一分钟快速开始
+## 🚀 快速开始（一分钟）
 
 ```bash
-# 1️⃣  启动系统（首次）
+# 1️⃣ 启动系统（首次）
 python quick_start.py
 
-# 2️⃣  打开 Claude Code - 系统自动激活 ⚡
+# 2️⃣ 打开 Claude Code - 自动激活 ⚡
 
-# 3️⃣  开始工作 - 一切自动进行
+# 3️⃣ 开始工作 - 完全自动
 ```
 
-完全自动！无需任何配置。
+**就这么简单！** 系统会自动初始化并启动所有 4 个 Agent。
 
 ---
 
@@ -40,13 +40,17 @@ python quick_start.py
 
 ```
 memorymeinskill/
-├── .instructions.md              ← Claude Code 自动配置 ⚡
+├── quick_start.py                ← 启动脚本 🚀
+├── auto_memory_service.py        ← 后台自动保存
 ├── memory_local/                 ← 私密记忆存储 🔒
 │   ├── qa_agent/
 │   ├── code_agent/
 │   ├── debug_agent/
 │   └── planning_agent/
-├── .github/skills/               ← 核心 Skill 定义
+├── config/
+│   ├── default.yaml              ← 默认配置
+│   └── local.yaml                ← 本地覆盖（可选）
+└── .github/skills/               ← 核心 Skill 定义
 ## 🎯 核心功能
 
 | 功能 | 说明 |
