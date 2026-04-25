@@ -1,9 +1,18 @@
 ---
-name: memory-agent-evolution
-description: This skill should be used when the user asks to "设计 memory agent 架构", "搭建分层记忆系统", "加入元认知反思层", "构建带知识链接的长期记忆", "让智能体持续进化", "用 Markdown 做记忆存储", or requests a "四层记忆 + 两层控制 + 时间感知知识图" blueprint with reflect/store dual-memory classes and evolution loop.
-argument-hint: 目标任务、业务场景、约束条件、现有技术栈
+name: Memory Agent Evolution
+version: 1.0.0
+category: architecture
+description: This skill should be used when designing long-term memory systems for AI agents. Use when the user asks to "设计 memory agent 架构", "搭建分层记忆系统", "加入元认知反思层", "构建带知识链接的长期记忆", "让智能体持续进化", or requests a "四层记忆 + 两层控制 + 时间感知知识图" blueprint. This skill provides a lightweight, Markdown-based memory architecture with four memory layers (L0/L1/L2/L3), dual orchestration controls, and a temporal knowledge graph. Features include complete storage with efficient dual-mode reading (Lite-Mode/Full-Mode), automatic skill-usage tracking, and reflection-driven evolution.
+argument-hint: 目标业务场景、约束条件、现有技术栈、性能预期
 user-invocable: true
 disable-model-invocation: false
+tags:
+  - memory-systems
+  - agent-architecture
+  - long-term-learning
+  - knowledge-graphs
+  - lightweight
+  - markdown-native
 ---
 # Memory Agent Evolution (Lightweight Markdown Edition)
 
