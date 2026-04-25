@@ -178,7 +178,7 @@ Implement this logical pipeline:
 Execute this loop every turn:
 
 1. Observe: read task, context, constraints
-2. Retrieve: evaluate gate -> choose Lite/Full expert -> gather candidates with selected read scope
+2. Retrieve: evaluate gate -> choose Lite-Mode or Full-Mode -> gather candidates with selected read scope
 3. Act/Reason: generate response or tool plan
 4. Evaluate: collect explicit/implicit feedback
 5. Reflect: detect success and failure patterns
@@ -200,9 +200,11 @@ Set routing presets by scenario:
 
 Adjust coefficients dynamically from evaluation signals in `store.md` and `reflect.md`.
 
-## MoE Gate (Full-Store, Lite-Invoke)
+## Dual-Mode Memory Retrieval (Not True MoE)
 
-Apply a lightweight MoE-style gate so memory is complete on write but efficient on read.
+Apply a rule-based gate (not a learned mixture) that selects between two read modes: complete storage on write, efficient read on invoke.
+
+**Clarification:** This is a lightweight routing mechanism inspired by MoE concepts, but simplified for memory systems. It chooses between two read scopes (not mixing multiple expert outputs), making it fundamentally different from transformer-based MoE which blends N expert outputs with learned weights.
 
 ### Storage Mode (always complete)
 
@@ -211,7 +213,7 @@ Apply a lightweight MoE-style gate so memory is complete on write but efficient 
 
 ### Invocation Modes
 
-#### Expert-Lite (default)
+#### Lite-Mode (default)
 
 Use when routine task and no critical escalation signal.
 
@@ -219,7 +221,7 @@ Read scope:
 - `store.md`: prioritize L1/L2 and optional `Lite Snapshot`
 - `reflect.md`: latest run evaluation + skill telemetry summary + top learning agenda item
 
-#### Expert-Full (escalation)
+#### Full-Mode (escalation)
 
 Use when deep context is required.
 
@@ -229,12 +231,12 @@ Read scope:
 
 ### Gate Condition (rule-based)
 
-Use Expert-Full when any condition is true:
+Use Full-Mode when any condition is true:
 - `task_priority = HIGH`
 - `repeated_error_count >= 2`
 - `needs_deep_trace = true`
 
-Otherwise use Expert-Lite.
+Otherwise use Lite-Mode.
 
 This keeps invocation professional and lightweight while preserving complete storage.
 
@@ -278,7 +280,7 @@ updated_at: 2026-04-24T00:00:00Z
 - last_compacted_at: 2026-04-24T10:00:00Z
   l1_focus_ids: [fact-001]
   l2_focus_ids: [proc-001]
-  note: minimal slice for Expert-Lite retrieval
+  note: minimal slice for Lite-Mode retrieval
 
 ## L3 MetaInsights
 - id: meta-001
@@ -329,7 +331,7 @@ updated_at: 2026-04-24T00:00:00Z
 
 ## Route Replay
 - replay_id: replay-001
-  selected_expert: Expert-Lite|Expert-Full
+  selected_mode: Lite-Mode|Full-Mode
   decision_path: "signal check -> mode selection"
   can_replay: true
 ```
@@ -355,8 +357,8 @@ If over-specialized for consecutive windows:
 1. Increase `DiversityBonus` in retrieval scoring
 2. Force at least one non-top-skill procedure candidate in L2 retrieval
 3. Create a learning experiment item in L3
-4. Keep Expert-Lite as default but inject one underused-skill procedure candidate
-5. Escalate to Expert-Full only if repeated failure persists
+4. Keep Lite-Mode as default but inject one underused-skill procedure candidate
+5. Escalate to Full-Mode only if repeated failure persists
 
 ## Metacognitive Subsystem Contract (L3)
 
@@ -409,12 +411,12 @@ Evaluate evolution over five dimensions:
 
 Apply these branches during consolidation and evolution:
 
-0. Mode branch (MoE gate)
+0. Mode branch (Dual-Mode Retrieval)
 
 - If escalation condition is met:
-  - use Expert-Full read scope
+  - use Full-Mode read scope
 - Else:
-  - use Expert-Lite read scope
+  - use Lite-Mode read scope
 
 1. Conflict branch
 
