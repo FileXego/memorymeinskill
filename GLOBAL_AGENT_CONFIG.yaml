@@ -1,0 +1,321 @@
+# 全局 Agent 配置
+# Global Agent Configuration for Memory System Integration
+#
+# 这个文件定义所有 agent 应该如何使用记忆系统
+# This file defines how all agents should use the memory system
+
+agents:
+  # ========================================
+  # Agent 1: QA Agent (问答智能体)
+  # ========================================
+  qa_agent:
+    enabled: true
+    memory_dir: ./memory/qa_agent
+    mode: lite                              # 默认使用 Lite-Mode
+    description: 处理用户问题并学习答案
+    
+    gate_conditions:
+      high_priority:
+        triggers_full_mode: true            # 高优先级问题升级到 Full-Mode
+        priority_keywords: ["urgent", "critical", "priority"]
+      error_escalation:
+        triggers_full_mode: true            # 2 次失败后升级
+        threshold: 2
+      complexity_detection:
+        triggers_full_mode: true            # 复杂问题升级
+        min_tokens: 200                     # 问题长度 >200 token
+    
+    retrieval:
+      lite_scope: ["L1", "L2", "snapshot"]  # Lite-Mode 读取范围
+      full_scope: ["L0", "L1", "L2", "L3"]  # Full-Mode 读取范围
+      ranking_weights:
+        relevance: 0.3
+        confidence: 0.2
+        recency: 0.2
+        success_rate: 0.15
+        diversity: 0.15
+    
+    auto_summary:
+      enabled: true                         # 启用自动总结
+      token_threshold: 5000                 # 信息量 >5000 token 触发总结
+      check_interval: 10                    # 每 10 轮检查一次
+      methods:
+        - extractive                        # 提取式摘要
+        - abstractive                       # 抽象式摘要
+    
+    skill_tracking:
+      enabled: true
+      window: 50                            # 监控最近 50 轮
+      over_specialization_threshold: 0.65   # 单一技能占比 >65%
+      hhi_threshold: 0.45                   # Herfindahl 指数 >0.45
+
+  # ========================================
+  # Agent 2: Code Agent (代码生成智能体)
+  # ========================================
+  code_agent:
+    enabled: true
+    memory_dir: ./memory/code_agent
+    mode: lite
+    description: 代码生成与优化
+    
+    gate_conditions:
+      complexity_detection:
+        triggers_full_mode: true
+        min_lines: 100                      # 代码 >100 行升级
+      framework_specific:
+        triggers_full_mode: true
+        frameworks: ["machine_learning", "distributed_systems", "security"]
+      refactor_mode:
+        triggers_full_mode: true
+        keywords: ["refactor", "optimize", "security", "performance"]
+    
+    auto_summary:
+      enabled: true
+      token_threshold: 8000                 # 代码生成通常更长
+      check_interval: 5
+      methods:
+        - extractive
+        - code_summary                      # 代码专用摘要
+    
+    skill_tracking:
+      enabled: true
+      window: 50
+
+  # ========================================
+  # Agent 3: Debug Agent (调试智能体)
+  # ========================================
+  debug_agent:
+    enabled: true
+    memory_dir: ./memory/debug_agent
+    mode: lite
+    description: 问题诊断与修复
+    
+    gate_conditions:
+      error_type:
+        triggers_full_mode: true
+        severe_errors: ["segmentation_fault", "out_of_memory", "deadlock"]
+      historical_patterns:
+        triggers_full_mode: true
+        similar_errors_threshold: 2        # 2 个相似错误触发 Full-Mode
+    
+    auto_summary:
+      enabled: true
+      token_threshold: 6000
+      check_interval: 8
+      methods:
+        - error_taxonomy                    # 错误分类摘要
+        - pattern_extraction                # 模式提取
+
+  # ========================================
+  # Agent 4: Planning Agent (规划智能体)
+  # ========================================
+  planning_agent:
+    enabled: true
+    memory_dir: ./memory/planning_agent
+    mode: lite
+    description: 任务规划与分解
+    
+    gate_conditions:
+      task_complexity:
+        triggers_full_mode: true
+        subtasks_threshold: 5               # 子任务 >5 个升级
+      dependencies:
+        triggers_full_mode: true
+        critical_path: true                 # 关键路径分析升级
+    
+    auto_summary:
+      enabled: true
+      token_threshold: 7000
+      check_interval: 10
+      methods:
+        - task_decomposition                # 任务分解摘要
+        - dependency_graph                  # 依赖图摘要
+
+# ========================================
+# 全局设置
+# Global Settings
+# ========================================
+global:
+  # 信息量检测与自动总结
+  auto_summary:
+    enabled: true
+    global_token_threshold: 5000            # 全局信息量阈值
+    
+    # 摘要方法优先级
+    summary_methods:
+      - type: "token_count"
+        triggers_at: 5000
+        method: "extractive"
+      
+      - type: "context_size"
+        triggers_at: 3                      # 3 个主要主题
+        method: "abstractive"
+      
+      - type: "time_based"
+        triggers_at: 300                    # 5 分钟的信息
+        method: "chronological"
+    
+    # 触发后的操作
+    post_summary_actions:
+      - save_to_memory                      # 保存到记忆
+      - compress_tokens                     # 压缩 token
+      - update_reflect                      # 更新 reflect.md
+      - reset_context                       # 重置上下文
+    
+    # 摘要质量检查
+    quality_check:
+      enabled: true
+      min_retention_rate: 0.8               # 保留至少 80% 的关键信息
+      max_compression_rate: 0.5             # 最多压缩到 50%
+
+  # 记忆策略
+  memory_policy:
+    l0_retention_days: 30                   # L0 事件保留 30 天
+    l1_confidence_threshold: 0.6            # L1 事实最低置信度
+    l2_success_threshold: 0.7               # L2 程序最低成功率
+    l3_update_frequency: 50                 # L3 每 50 轮更新一次
+    
+    # 冲突解决
+    conflict_resolution:
+      confidence_gap_threshold: 0.3         # 置信度差 >0.3 时替换
+      keep_both_strategy: true              # 否则保留两者并标记矛盾
+  
+  # 性能优化
+  performance:
+    lite_mode_timeout_ms: 100               # Lite-Mode 超时
+    full_mode_timeout_ms: 500               # Full-Mode 超时
+    cache_enabled: true                     # 启用缓存
+    cache_ttl_seconds: 300                  # 缓存 TTL 5 分钟
+    max_memory_size_mb: 100                 # 单个 agent 内存上限 100MB
+  
+  # 监控与告警
+  monitoring:
+    enabled: true
+    log_level: INFO                         # DEBUG, INFO, WARNING, ERROR
+    
+    alerts:
+      - condition: "memory_size > 50mb"
+        action: "archive_old_events"
+      
+      - condition: "error_rate > 0.2"
+        action: "escalate_to_full_mode"
+      
+      - condition: "over_specialized == true"
+        action: "increase_diversity_bonus"
+      
+      - condition: "p99_latency > 500ms"
+        action: "enable_lite_mode_only"
+    
+    metrics:
+      track_success_rate: true              # 追踪成功率
+      track_latency_percentiles: true       # 追踪延迟分布
+      track_memory_growth: true             # 追踪内存增长
+      track_skill_concentration: true       # 追踪技能浓度
+
+# ========================================
+# 触发规则
+# Trigger Rules
+# ========================================
+triggers:
+  # 何时升级到 Full-Mode
+  escalate_to_full_mode:
+    rules:
+      - name: "high_priority_task"
+        condition: "task.priority == HIGH"
+        action: "use_full_mode"
+        description: "高优先级任务自动升级到 Full-Mode"
+      
+      - name: "repeated_errors"
+        condition: "error_count >= 2"
+        action: "use_full_mode"
+        description: "连续错误 2 次后升级"
+      
+      - name: "debug_mode"
+        condition: "debug_flag == true"
+        action: "use_full_mode"
+        description: "调试模式强制 Full-Mode"
+      
+      - name: "context_complexity"
+        condition: "context_tokens > threshold"
+        action: "use_full_mode"
+        description: "上下文复杂度过高升级"
+  
+  # 何时触发自动总结
+  auto_summary_triggers:
+    rules:
+      - name: "token_threshold"
+        condition: "current_tokens > threshold"
+        threshold_values:
+          qa_agent: 5000
+          code_agent: 8000
+          debug_agent: 6000
+          planning_agent: 7000
+          global: 5000
+        action: "trigger_summary"
+        description: "信息量超过阈值"
+      
+      - name: "time_based"
+        condition: "elapsed_time > duration"
+        duration_seconds: 300                # 5 分钟
+        action: "trigger_summary"
+        description: "定期总结（5 分钟）"
+      
+      - name: "topic_drift"
+        condition: "semantic_similarity < threshold"
+        threshold: 0.5                       # 语义相似度 <0.5
+        action: "trigger_summary"
+        description: "话题漂移时总结"
+      
+      - name: "memory_pressure"
+        condition: "memory_usage > threshold"
+        threshold_mb: 50
+        action: "trigger_summary"
+        description: "内存压力过大"
+  
+  # 何时更新记忆
+  memory_update_triggers:
+    rules:
+      - name: "consolidate_every_n_runs"
+        condition: "run_count % n == 0"
+        n: 10
+        action: "consolidate_memory"
+        description: "每 10 轮巩固一次记忆"
+      
+      - name: "after_success_pattern"
+        condition: "success_count >= 3"
+        action: "promote_to_l2"
+        description: "3 次成功后推广到 L2 程序"
+      
+      - name: "after_error_pattern"
+        condition: "similar_errors >= 2"
+        action: "create_l3_insight"
+        description: "相似错误 2 次后创建 L3 洞察"
+      
+      - name: "after_strategy_change"
+        condition: "policy_updated == true"
+        action: "log_strategy_change"
+        description: "策略变化后记录"
+
+# ========================================
+# 示例配置扩展
+# Example Extension Points
+# ========================================
+custom_agents:
+  # 在这里添加你的自定义智能体配置
+  # Add your custom agent configurations here
+  my_research_agent:
+    enabled: false  # 删除此行以启用
+    memory_dir: ./memory/research_agent
+    mode: full                              # 研究通常需要完整上下文
+    description: 论文阅读与分析
+    auto_summary:
+      enabled: true
+      token_threshold: 10000                # 学术文本通常很长
+      check_interval: 15
+
+# ========================================
+# 版本信息
+# ========================================
+version: "1.0.0"
+last_updated: "2026-04-25"
+compatible_with: "memory-agent-evolution >= 1.0.0"
